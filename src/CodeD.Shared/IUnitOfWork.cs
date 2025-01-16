@@ -1,4 +1,4 @@
-﻿namespace CodeD.Domain.Interfaces;
+namespace CodeD.Domain.Abstractions;
 
 public interface IUnitOfWork : IDisposable
 {

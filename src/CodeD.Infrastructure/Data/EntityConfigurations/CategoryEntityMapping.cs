@@ -1,4 +1,4 @@
-﻿using CodeD.Domain.Entities;
+using CodeD.Domain.Categories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

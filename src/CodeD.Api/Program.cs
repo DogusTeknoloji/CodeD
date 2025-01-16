@@ -1,3 +1,4 @@
+using CodeD.Application.Queries;
 
 namespace CodeD.Api
 {
@@ -14,6 +15,11 @@ namespace CodeD.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(typeof(Program).Assembly)
+                    .RegisterServicesFromAssembly(typeof(PagableRequest).Assembly)
+            );
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -24,7 +30,6 @@ namespace CodeD.Api
             }
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
