@@ -11,11 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CodeD.Application.Abstractions\CodeD.Application.Abstractions.csproj" />
     <ProjectReference Include="..\CodeD.Domain\CodeD.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\Product\" />
+    <Folder Include="Commands\Products\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-namespace CodeD.Domain.Posts;
+namespace CodeD.Domain.Shared;
 
 public sealed record Title
 {

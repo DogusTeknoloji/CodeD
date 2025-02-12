@@ -1,5 +1,6 @@
 using CodeD.Domain.Abstractions;
 using CodeD.Domain.Categories;
+using CodeD.Domain.Shared;
 
 namespace CodeD.Domain.Posts;
 
@@ -35,5 +36,15 @@ public sealed class Post : Entity<PostId>
         // Domain Event
         p.AddDomainEvent(new PostCreatedEvent(p.Id));
         return p;
+    }
+
+    public void Publish()
+    {
+        if (PostStatus == PostStatus.Published)
+            return;
+        PostStatus = PostStatus.Published;
+        PublishedAt = DateTimeOffset.UtcNow;
+        // Domain Event
+        AddDomainEvent(new PostPublishedEvent(Id));
     }
 }
