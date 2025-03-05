@@ -5,10 +5,13 @@ using Microsoft.EntityFrameworkCore.Design;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using CodeD.Domain.Abstractions;
 
 namespace CodeD.Infrastructure.Data;
 
-public class CodeDDbContext : Microsoft.EntityFrameworkCore.DbContext
+public class CodeDDbContext : Microsoft.EntityFrameworkCore.DbContext, IUnitOfWork
 {
     private readonly IMediator _mediator;
 
@@ -29,12 +32,22 @@ public class CodeDDbContextDesignFactory : IDesignTimeDbContextFactory<CodeDDbCo
 {
     public CodeDDbContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<CodeDDbContext>().UseNpgsql("");
+        // Build configuration
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        // Get connection string
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        var optionsBuilder = new DbContextOptionsBuilder<CodeDDbContext>().UseNpgsql(connectionString);
+
 
         return new CodeDDbContext(optionsBuilder.Options, new NoMediator());
     }
 
-    class NoMediator : IMediator
+    private class NoMediator : IMediator
     {
         public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request, CancellationToken cancellationToken = default)
         {
