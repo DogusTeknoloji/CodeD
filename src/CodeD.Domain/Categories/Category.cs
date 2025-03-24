@@ -5,6 +5,7 @@ namespace CodeD.Domain.Categories;
 
 public sealed class Category : Entity<CategoryId>
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1170:Use read-only auto-implemented property", Justification = "<Pending>")]
     public Title Title { get; private set; }
 
 #pragma warning disable S1144 // Unused private types or members should be removed

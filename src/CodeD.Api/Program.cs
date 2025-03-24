@@ -1,4 +1,4 @@
-using CodeD.Domain.Abstractions;
+using CodeD.Domain.Abstractions.Modules;
 using Scalar.AspNetCore;
 using System.Reflection;
 
@@ -6,7 +6,7 @@ namespace CodeD.Api;
 
 public static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -14,11 +14,11 @@ public static class Program
         builder.Configuration.GetSection("ScanAssemblies").Bind(scanAssemblyNameList);
         var scanAssemblies = scanAssemblyNameList.Select(Assembly.Load).ToArray();
 
-        var (preRegisterers, postRegisterers, preSetups, postSetups) = GetRegistererAndSetups(scanAssemblies);
+        var (preRegisterers, postRegisterers, preSetups, postSetups, mediatRServiceRegisterers) = GetRegistererAndSetups(scanAssemblies);
 
         foreach (var preRegisterer in preRegisterers)
         {
-            preRegisterer.PreRegister(builder.Services, builder.Configuration);
+            await preRegisterer.PreRegister(builder.Services, builder.Configuration);
         }
         // Add services to the container.
 
@@ -28,21 +28,30 @@ public static class Program
 
         builder.Services.AddOpenApi();
 
-        //builder.Services.AddMediatR(cfg =>
-        //    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly)
-        //        .RegisterServicesFromAssembly(typeof(PagableRequest).Assembly)
-        //)
+        builder.Services.AddMediatR(cfg =>
+        {
+            var currentAssembly = typeof(Program).Assembly;
+            cfg.RegisterServicesFromAssembly(currentAssembly);
+
+            foreach (var assembly in mediatRServiceRegisterers.SelectMany(x => x.GetAssemblies()).Where(x => x != currentAssembly))
+            {
+                cfg.RegisterServicesFromAssembly(assembly);
+            }
+
+            //cfg.RegisterServicesFromAssembly(typeof(Program).Assembly)
+            //.RegisterServicesFromAssembly(typeof(PagableRequest).Assembly)
+        });
 
         foreach (var postRegisterer in postRegisterers)
         {
-            postRegisterer.PostRegister(builder.Services, builder.Configuration);
+            await postRegisterer.PostRegister(builder.Services, builder.Configuration);
         }
 
         var app = builder.Build();
 
         foreach (var preSetup in preSetups)
         {
-            preSetup.PreSetup(app.Services, app.Configuration);
+            await preSetup.PreSetup(app.Services, app.Configuration);
         }
 
         // Configure the HTTP request pipeline.
@@ -58,18 +67,19 @@ public static class Program
 
         foreach (var postSetup in postSetups)
         {
-            postSetup.PostSetup(app.Services, app.Configuration);
+            await postSetup.PostSetup(app.Services, app.Configuration);
         }
 
-        app.Run();
+        await app.RunAsync();
     }
 
-    private static (List<IModuleServicePreRegistration> preRegisterers, List<IModuleServicePostRegistration> postRegisterers, List<IModuleApplicationPreSetup> preSetups, List<IModuleApplicationPostSetup> postSetups) GetRegistererAndSetups(Assembly[] assemblies)
+    private static (List<IModuleServicePreRegistration> preRegisterers, List<IModuleServicePostRegistration> postRegisterers, List<IModuleApplicationPreSetup> preSetups, List<IModuleApplicationPostSetup> postSetups, List<IModuleMediatRServiceRegistration> mediatRServiceRegisterers) GetRegistererAndSetups(Assembly[] assemblies)
     {
         var preRegisterers = new List<IModuleServicePreRegistration>();
         var postRegisterers = new List<IModuleServicePostRegistration>();
         var preSetups = new List<IModuleApplicationPreSetup>();
         var postSetups = new List<IModuleApplicationPostSetup>();
+        var mediatRServiceRegisterers = new List<IModuleMediatRServiceRegistration>();
 
         var types = assemblies.SelectMany(assembly => assembly.GetTypes()
                                                                    .Where(type => type.IsClass && !type.IsAbstract));
@@ -97,7 +107,12 @@ public static class Program
                 instance ??= Activator.CreateInstance(type);
                 postSetups.Add((IModuleApplicationPostSetup)instance!);
             }
+            if (typeof(IModuleMediatRServiceRegistration).IsAssignableFrom(type))
+            {
+                instance ??= Activator.CreateInstance(type);
+                mediatRServiceRegisterers.Add((IModuleMediatRServiceRegistration)instance!);
+            }
         }
-        return (preRegisterers, postRegisterers, preSetups, postSetups);
+        return (preRegisterers, postRegisterers, preSetups, postSetups, mediatRServiceRegisterers);
     }
 }

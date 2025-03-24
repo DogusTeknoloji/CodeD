@@ -6,9 +6,15 @@ namespace CodeD.Domain.Posts;
 
 public sealed class Post : Entity<PostId>
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1170:Use read-only auto-implemented property", Justification = "<Pending>")]
     public CategoryId CategoryId { get; private set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1170:Use read-only auto-implemented property", Justification = "<Pending>")]
     public Title Title { get; private set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1170:Use read-only auto-implemented property", Justification = "<Pending>")]
     public Content Content { get; private set; }
+
     public PostStatus PostStatus { get; private set; } = PostStatus.Draft;
     public DateTimeOffset? PublishedAt { get; private set; } = null;
 
