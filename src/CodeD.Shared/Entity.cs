@@ -1,3 +1,4 @@
+#pragma warning disable RCS1170 // Use read-only auto-implemented property
 namespace CodeD.Domain.Abstractions;
 
 public abstract class Entity<TID>
@@ -44,8 +45,4 @@ public abstract class Entity<TID>
         _domainEvents.Clear();
     }
 }
-
-public interface IEntityId
-{
-    Guid Value { get; }
-}
+#pragma warning restore RCS1170 // Use read-only auto-implemented property

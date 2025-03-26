@@ -1,4 +1,6 @@
+using CodeD.Api.Dto.Categories;
 using CodeD.Api.Dto.Products;
+using CodeD.Application.Commands.Categories;
 using CodeD.Application.Queries;
 using CodeD.Application.Queries.Product;
 using CodeD.Domain.Abstractions;
@@ -10,13 +12,13 @@ namespace CodeD.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PostController(ILogger<WeatherForecastController> _logger)
+    public class CategoryController(ILogger<CategoryController> _logger)
         : ControllerBase
     {
         [HttpGet]
-        public async Task<IEnumerable<ProductListResponse>> GetAsync(int pageIndex, int pageSize, [FromServices] IMediator mediator)
+        public async Task<IEnumerable<CategoryListResponse>> GetAsync(int pageIndex, int pageSize, [FromServices] IMediator mediator)
         {
-            var req = new ProductListQuery(new PagableRequest(pageIndex, pageSize));
+            var req = new CategoryListQuery(new PagableRequest(pageIndex, pageSize));
 
             var res = await mediator.Send(req);
 
@@ -26,31 +28,33 @@ namespace CodeD.Api.Controllers
         [HttpGet("{id}")]
         public Task<Post?> GetByIdAsync(int id)
         {
-            _logger.LogDebug($"{nameof(PostController)}.{nameof(GetByIdAsync)} is started.");
+            _logger.LogDebug($"{nameof(CategoryController)}.{nameof(GetByIdAsync)} is started.");
             //return _productService.GetProductByIdAsync(id);
             throw new NotImplementedException();
         }
 
         [HttpPost()]
-        public Task<CreateProductResponse?> PostAsync([FromBody] CreateProductRequest product, [FromServices] IUnitOfWork unitOfWork)
+        [ProducesResponseType<CreateCategoryResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<Result>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateAsync([FromBody] CreateCategoryRequest category, [FromServices] IMediator mediator)
         {
-            //var p = new Product(0, product.Key, product.Name, product.Description, product.Price, product.Stock, product.Image, product.CategoryId);
+            var command = new CreateCategoryCommand
+            {
+                Key = category.Key,
+                Title = category.Title,
+                SourceProviderKey = category.SourceProviderKey ?? string.Empty,
+                SourceItemId = category.SourceItemId ?? string.Empty,
+                SourceVersion = category.SourceVersion
+            };
 
-            //_productService.AddProduct(p);
+            var categoryIdResult = await mediator.Send(command);
 
-            //await unitOfWork.CommitAsync();
+            if (categoryIdResult.IsSuccess)
+            {
+                return Ok(new CreateCategoryResponse(categoryIdResult.Value, category.Key, category.Title, category.SourceProviderKey, category.SourceItemId, category.SourceVersion));
+            }
 
-            //return new CreateProductResponse(
-            //    Id: p.Id,
-            //    Key: p.Key,
-            //    Name: p.Name,
-            //    Description: p.Description,
-            //    Price: p.Price,
-            //    Stock: p.Stock,
-            //    Image: p.Image,
-            //    CategoryId: p.CategoryId
-            //);
-            throw new NotImplementedException();
+            return BadRequest(categoryIdResult);
         }
 
         [HttpPut("{id}")] // PUT /product/1

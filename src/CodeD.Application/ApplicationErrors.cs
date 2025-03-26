@@ -11,5 +11,8 @@ namespace CodeD.Application
     {
         public static Error CategoryNotFound(string key, string? additionalMessage = null)
             => new("application:category_not_found", $"Category [{key}] not found. {additionalMessage}");
+
+        public static Error CategoryFound(string key, string? additionalMessage = null)
+            => new("application:category_found", $"Category [{key}] found. {additionalMessage}");
     }
 }

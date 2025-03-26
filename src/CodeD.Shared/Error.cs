@@ -1,9 +1,9 @@
-﻿namespace CodeD.Domain.Abstractions;
+namespace CodeD.Domain.Abstractions;
 
 public sealed class Error
 {
     private readonly Error[] _errors;
-    public static readonly Error None = new Error();
+    public static readonly Error None = new();
 
     private Error()
     {

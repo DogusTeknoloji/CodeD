@@ -1,7 +1,9 @@
 using CodeD.Domain.Abstractions;
 using CodeD.Domain.Abstractions.Modules;
 using CodeD.Domain.Categories;
+using CodeD.Domain.Posts;
 using CodeD.Domain.Shared;
+using CodeD.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,6 +60,8 @@ namespace CodeD.Infrastructure.Data
             });
 
             serviceCollection.AddScoped<IUnitOfWork>(c => c.GetRequiredService<CodeDDbContext>());
+            serviceCollection.AddScoped<ICategoryRepository, CategoryRepository>();
+            serviceCollection.AddScoped<IPostRepository, PostRepository>();
             return Task.CompletedTask;
         }
 

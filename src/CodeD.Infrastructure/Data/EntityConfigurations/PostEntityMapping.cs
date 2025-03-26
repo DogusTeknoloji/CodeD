@@ -41,6 +41,7 @@ public class PostEntityMapping(string? schema = null)
         builder.Property(x => x.PostStatus)
             .IsRequired()
             ;
+
         builder.Property(x => x.PublishedAt)
             .IsRequired(false)
             ;
