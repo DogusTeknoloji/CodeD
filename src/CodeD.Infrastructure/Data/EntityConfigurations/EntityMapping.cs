@@ -47,6 +47,7 @@ public abstract class EntityMapping<TEntity, TID>(string tableName, string? sche
             wc.Property(x => x.CreatedAt)
                 .IsRequired()
                 .HasColumnName("CreatedAt")
+                .HasColumnType("timestamp with time zone")
                 ;
 
             wc.Property(x => x.CreatedBy)
@@ -55,7 +56,8 @@ public abstract class EntityMapping<TEntity, TID>(string tableName, string? sche
 
             wc.Property(x => x.ModifiedAt)
                 .IsRequired()
-                .HasColumnName("ModifiedAt");
+                .HasColumnName("ModifiedAt")
+                .HasColumnType("timestamp with time zone");
 
             wc.Property(x => x.ModifiedBy)
                 .IsRequired()

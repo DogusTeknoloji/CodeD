@@ -29,4 +29,9 @@ public record ExternalReference
             Version = version
         };
     }
+
+    public static ExternalReference CreateInternal(string itemId, string? version = null)
+    {
+        return Create("CodeD", itemId, version ?? DateTimeOffset.Now.ToString("O"));
+    }
 }

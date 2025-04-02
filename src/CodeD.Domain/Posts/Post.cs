@@ -28,15 +28,15 @@ public sealed class Post : Entity<PostId>
         Content = Content.None;
     }
 
-    private Post(PostId id, Key key, CategoryId categoryId, Title title, Content content, WhoColumns whoColumns, ExternalReference externalReference)
-        : base(id, key, whoColumns, externalReference)
+    private Post(PostId id, Key key, CategoryId categoryId, Title title, Content content, WhoColumns whoColumns, ExternalReference? externalReference = null)
+        : base(id, key, whoColumns, externalReference ?? ExternalReference.CreateInternal(id.Value.ToString(), whoColumns.ModifiedAt.ToString("O")))
     {
         CategoryId = categoryId;
         Title = title;
         Content = content;
     }
 
-    public static Post Create(Key key, CategoryId categoryId, Title title, Content content, WhoColumns whoColumns, ExternalReference externalReference)
+    public static Post Create(Key key, CategoryId categoryId, Title title, Content content, WhoColumns whoColumns, ExternalReference? externalReference = null)
     {
         var p = new Post(PostId.New(), key, categoryId, title, content, whoColumns, externalReference);
         // Domain Event

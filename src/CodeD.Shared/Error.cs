@@ -1,15 +1,16 @@
+using System.Text.Json.Serialization;
+
 namespace CodeD.Domain.Abstractions;
 
 public sealed class Error
 {
-    private readonly Error[] _errors;
+    private readonly Error[]? _errors = null;
     public static readonly Error None = new();
 
     private Error()
     {
         Code = string.Empty;
         Message = string.Empty;
-        _errors = [];
     }
 
     public Error(string code, string message, params Error[] errors)
@@ -19,11 +20,12 @@ public sealed class Error
 
         Code = code;
         Message = message;
-        _errors = errors;
+        _errors = errors.Length == 0 ? null : errors;
     }
 
     public string Code { get; }
     public string Message { get; }
 
-    public IReadOnlyCollection<Error> Errors => _errors;
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyCollection<Error>? Errors => _errors;
 }

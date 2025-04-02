@@ -4,3 +4,13 @@ GET {{CodeD.Api_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+
+POST {{CodeD.Api_HostAddress}}/Category
+Accept: application/json
+Content-Type: application/json
+
+{
+  "key": "A",
+  "title": "Demo"
+}

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CodeD.Infrastructure.Migrations
 {
     [DbContext(typeof(CodeDDbContext))]
-    [Migration("20250321102632_AddClusterToTables")]
-    partial class AddClusterToTables
+    [Migration("20250402103106_AddClusterColumns")]
+    partial class AddClusterColumns
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

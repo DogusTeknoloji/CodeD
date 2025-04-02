@@ -51,7 +51,7 @@ namespace CodeD.Api.Controllers
 
             if (categoryIdResult.IsSuccess)
             {
-                return Ok(new CreateCategoryResponse(categoryIdResult.Value, category.Key, category.Title, category.SourceProviderKey, category.SourceItemId, category.SourceVersion));
+                return Ok(new CreateCategoryResponse(categoryIdResult.Value!.Value, category.Key, category.Title, category.SourceProviderKey, category.SourceItemId, category.SourceVersion));
             }
 
             return BadRequest(categoryIdResult);

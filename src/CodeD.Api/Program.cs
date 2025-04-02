@@ -8,6 +8,8 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
         var builder = WebApplication.CreateBuilder(args);
 
         List<string> scanAssemblyNameList = [];

@@ -1,11 +1,12 @@
-﻿using CodeD.Domain.Entities;
+using CodeD.Domain.Abstractions;
 
 namespace CodeD.Domain.Interfaces;
 
-public interface IEntityRepository<TEntity, TId> : IEntityRepository
-    where TEntity : Entity<TId>
+public interface IEntityRepository<TEntity, TID> : IEntityRepository
+    where TEntity : Entity<TID>
+    where TID : class, IEntityId
 {
-    ValueTask<TEntity?> GetByIdAsync(TId id);
+    ValueTask<TEntity?> GetByIdAsync(TID id);
 
     Task<TEntity?> GetByKeyAsync(string key);
 

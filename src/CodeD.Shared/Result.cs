@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace CodeD.Domain.Abstractions;
 
 public sealed class Result
@@ -33,6 +35,7 @@ public sealed class Result<T>
     public bool IsSuccess => Error == Error.None;
     public Error Error { get; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public T Value { get; }
 
     private Result(Error error)

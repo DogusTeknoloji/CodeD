@@ -10,24 +10,20 @@ public record WhoColumns
     private WhoColumns() { }
 
     public static WhoColumns Create(DateTimeOffset createdAt, Guid createdBy, DateTimeOffset modifiedAt, Guid modifiedBy)
-    {
-        return new WhoColumns()
+        => new()
         {
             CreatedAt = createdAt,
             CreatedBy = createdBy,
             ModifiedAt = modifiedAt,
             ModifiedBy = modifiedBy
         };
-    }
 
-    public static WhoColumns Empty()
-    {
-        return new WhoColumns()
+    public static WhoColumns Empty() =>
+        new()
         {
             CreatedAt = DateTimeOffset.Now,
             CreatedBy = Guid.Empty,
             ModifiedAt = DateTimeOffset.Now,
             ModifiedBy = Guid.Empty
         };
-    }
 }

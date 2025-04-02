@@ -16,13 +16,13 @@ public sealed class Category : Entity<CategoryId>
         Title = default!;
     }
 
-    private Category(CategoryId id, Key key, Title title, WhoColumns whoColumns, ExternalReference externalReference)
-        : base(id, key, whoColumns, externalReference)
+    private Category(CategoryId id, Key key, Title title, WhoColumns whoColumns, ExternalReference? externalReference = null)
+        : base(id, key, whoColumns, externalReference ?? ExternalReference.CreateInternal(id.Value.ToString(), whoColumns.ModifiedAt.ToString("O")))
     {
         Title = title;
     }
 
-    public static Category Create(Key key, Title title, WhoColumns whoColumns, ExternalReference externalReference)
+    public static Category Create(Key key, Title title, WhoColumns whoColumns, ExternalReference? externalReference = null)
     {
         var c = new Category(CategoryId.New(), key, title, whoColumns, externalReference);
         // Domain Event

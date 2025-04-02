@@ -5,7 +5,7 @@ using CodeD.Domain.Shared;
 
 namespace CodeD.Application.Commands.Categories;
 
-public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, Guid>
+public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, Guid?>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICategoryRepository _categoryRepository;
@@ -16,7 +16,7 @@ public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategor
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<Result<Guid>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid?>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         using (_unitOfWork)
         {
@@ -25,19 +25,26 @@ public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategor
 
             if (entity != null)
             {
-                return Result.Failure<Guid>(ApplicationErrors.CategoryFound(request.Key));
+                return Result.Failure<Guid?>(ApplicationErrors.CategoryFound(request.Key));
+            }
+
+            ExternalReference? externalReference = null;
+
+            if (!string.IsNullOrWhiteSpace(request.SourceProviderKey) && !string.IsNullOrWhiteSpace(request.SourceItemId))
+            {
+                externalReference = ExternalReference.Create(request.SourceProviderKey, request.SourceItemId, request.SourceVersion);
             }
 
             entity = Category.Create(key,
                 Title.Create(request.Title),
-                WhoColumns.Create(DateTimeOffset.Now, Guid.Empty, DateTimeOffset.Now, Guid.Empty),
-                ExternalReference.Create(request.SourceProviderKey, request.SourceItemId, request.SourceVersion));
+                WhoColumns.Empty(),
+                externalReference);
 
             await _categoryRepository.AddAsync(entity);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(entity.Id.Value);
+            return Result.Success<Guid?>(entity.Id.Value);
         }
     }
 }
