@@ -26,4 +26,5 @@ public record WhoColumns
             ModifiedAt = DateTimeOffset.Now,
             ModifiedBy = Guid.Empty
         };
+
 }

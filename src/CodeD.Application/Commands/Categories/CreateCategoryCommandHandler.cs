@@ -5,7 +5,7 @@ using CodeD.Domain.Shared;
 
 namespace CodeD.Application.Commands.Categories;
 
-public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, Guid?>
+public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, Category?>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICategoryRepository _categoryRepository;
@@ -16,7 +16,7 @@ public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategor
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<Result<Guid?>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Category?>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         using (_unitOfWork)
         {
@@ -25,7 +25,7 @@ public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategor
 
             if (entity != null)
             {
-                return Result.Failure<Guid?>(ApplicationErrors.CategoryFound(request.Key));
+                return Result.Failure<Category?>(ApplicationErrors.CategoryFound(request.Key));
             }
 
             ExternalReference? externalReference = null;
@@ -44,7 +44,7 @@ public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategor
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success<Guid?>(entity.Id.Value);
+            return Result.Success<Category?>(entity);
         }
     }
 }

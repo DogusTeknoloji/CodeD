@@ -3,9 +3,11 @@ using CodeD.Domain.Categories;
 
 namespace CodeD.Application.Commands.Categories;
 
-public sealed class CreateCategoryCommand : ICommand<Category?>
+public sealed class UpdateCategoryCommand : ICommand<Category?>
 {
-    public string Key { get; set; } = string.Empty;
+    public Guid? Id { get; set; }
+
+    public string? Key { get; set; }
 
     public string Title { get; set; } = string.Empty;
 

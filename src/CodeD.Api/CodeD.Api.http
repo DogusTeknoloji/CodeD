@@ -14,3 +14,46 @@ Content-Type: application/json
   "key": "A",
   "title": "Demo"
 }
+
+
+
+
+###
+
+# "2bd14a4e-c5e6-4add-88e5-05dbaf2af1c2"
+
+PUT {{CodeD.Api_HostAddress}}/Category/2bd14a4e-c5e6-4add-88e5-05dbaf2af1c2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "key": "A",
+  "title": "Demo2a"
+}
+
+###
+
+# A
+
+PUT {{CodeD.Api_HostAddress}}/Category/A
+Accept: application/json
+Content-Type: application/json
+
+{
+  "key": "A",
+  "title": "Demo3"
+}
+
+
+###
+
+# A
+
+PUT {{CodeD.Api_HostAddress}}/Category/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "key": "A",
+  "title": "Demo4"
+}

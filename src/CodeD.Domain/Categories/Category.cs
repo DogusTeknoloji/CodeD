@@ -29,4 +29,13 @@ public sealed class Category : Entity<CategoryId>
         c.AddDomainEvent(new CategoryCreatedEvent(c.Id));
         return c;
     }
+
+    public void Update(Title title, ExternalReference? externalReference = null)
+    {
+        SetWhoColumnsForUpdate();
+        Title = title;
+        SetExternalReference(externalReference ?? ExternalReference.CreateInternal(Id.Value.ToString(), WhoColumns.ModifiedAt.ToString("O")));
+        // Domain Event
+        AddDomainEvent(new CategoryUpdatedEvent(Id));
+    }
 }

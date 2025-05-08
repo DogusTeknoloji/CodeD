@@ -4,6 +4,7 @@ using CodeD.Application.Commands.Categories;
 using CodeD.Application.Queries;
 using CodeD.Application.Queries.Product;
 using CodeD.Domain.Abstractions;
+using CodeD.Domain.Categories;
 using CodeD.Domain.Posts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,9 @@ namespace CodeD.Api.Controllers
         [HttpPost()]
         [ProducesResponseType<CreateCategoryResponse>(StatusCodes.Status200OK)]
         [ProducesResponseType<Result>(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateAsync([FromBody] CreateCategoryRequest category, [FromServices] IMediator mediator)
+        public async Task<IActionResult> CreateAsync(
+            [FromBody] CreateCategoryRequest category,
+            [FromServices] IMediator mediator)
         {
             var command = new CreateCategoryCommand
             {
@@ -47,45 +50,62 @@ namespace CodeD.Api.Controllers
                 SourceVersion = category.SourceVersion
             };
 
-            var categoryIdResult = await mediator.Send(command);
+            var categoryResult = await mediator.Send(command);
 
-            if (categoryIdResult.IsSuccess)
+            if (categoryResult.IsSuccess)
             {
-                return Ok(new CreateCategoryResponse(categoryIdResult.Value!.Value, category.Key, category.Title, category.SourceProviderKey, category.SourceItemId, category.SourceVersion));
+                var c = categoryResult.Value!;
+                return Ok(new CreateCategoryResponse(c.Id.Value, c.Key.Value, c.Title.Value, c.ExternalReference.ProviderKey, c.ExternalReference.ItemId, c.ExternalReference.Version));
             }
 
-            return BadRequest(categoryIdResult);
+            return BadRequest(categoryResult);
         }
 
-        [HttpPut("{id}")] // PUT /product/1
-        public Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] UpdateProductRequest product, [FromServices] IUnitOfWork unitOfWork)
+        [HttpPut("{idOrKey}")] // PUT /category/30FFD9E8-C9F8-4149-8C02-CED70A7AC684 or PUT /category/A
+        [HttpPut()]
+        public async Task<IActionResult> PutAsync(
+            [FromRoute] string? idOrKey,
+            [FromBody] UpdateCategoryRequest categoryRequest,
+            [FromServices] IMediator mediator)
         {
-            throw new NotImplementedException();
-            //var p = await _productService.GetProductByIdAsync(id);
+            var command = new UpdateCategoryCommand
+            {
+                Id = categoryRequest.Id,
+                Key = categoryRequest.Key,
+                Title = categoryRequest.Title,
+                SourceProviderKey = categoryRequest.SourceProviderKey ?? string.Empty,
+                SourceItemId = categoryRequest.SourceItemId ?? string.Empty,
+                SourceVersion = categoryRequest.SourceVersion
+            };
 
-            //if (p == null)
-            //{
-            //    return NotFound();
-            //}
+            if (Guid.TryParse(idOrKey, out Guid id))
+            {
+                command.Id = id;
+            }
+            else if (!string.IsNullOrEmpty(idOrKey))
+            {
+                command.Id = null;
+                command.Key = idOrKey;
+            }
 
-            //p.UpdateKey(product.Key);
-            //p.UpdateName(product.Name);
-            //p.UpdateDescription(product.Description);
+            var categoryResult = await mediator.Send(command);
 
-            ////_productService.
+            if (categoryResult is { IsSuccess: false, Value: not null } && (categoryResult.Value.Id.Value == Guid.Empty || categoryResult.Value.Id.Value == Guid.Parse("")))
+            {
+                return BadRequest(categoryResult);
+            }
 
-            //await unitOfWork.CommitAsync();
+            if (categoryResult is { IsSuccess: true, Value: not null })
+            {
+                return Ok(new CreateCategoryResponse(categoryResult.Value.Id.Value,
+                                                     categoryResult.Value.Key.Value,
+                                                     categoryResult.Value.Title.Value,
+                                                     categoryResult.Value.ExternalReference.ProviderKey,
+                                                     categoryResult.Value.ExternalReference.ItemId,
+                                                     categoryResult.Value.ExternalReference.Version));
+            }
 
-            //return Json(new CreateProductResponse(
-            //    Id: p.Id,
-            //    Key: p.Key,
-            //    Name: p.Name,
-            //    Description: p.Description,
-            //    Price: p.Price,
-            //    Stock: p.Stock,
-            //    Image: p.Image,
-            //    CategoryId: p.CategoryId
-            //));
+            return BadRequest(categoryResult);
         }
     }
 }

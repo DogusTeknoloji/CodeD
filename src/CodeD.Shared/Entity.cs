@@ -44,5 +44,40 @@ public abstract class Entity<TID>
     {
         _domainEvents.Clear();
     }
+
+    protected void SetWhoColumnsForUpdate()
+    {
+        // TODO: ModifiedBy kısmının Authentication'dan alınması lazım
+        WhoColumns = WhoColumns.Create(WhoColumns.CreatedAt, WhoColumns.CreatedBy, DateTimeOffset.Now, Guid.Empty);
+    }
+
+    protected void SetExternalReference(ExternalReference externalReference)
+    {
+        ArgumentNullException.ThrowIfNull(externalReference);
+
+        // external reference Change Cases
+
+        // entity - null, request null => CreateInternal
+        if (string.IsNullOrWhiteSpace(ExternalReference.ProviderKey) && string.IsNullOrWhiteSpace(externalReference.ProviderKey))
+        {
+            ExternalReference = ExternalReference.CreateInternal(Id.Value.ToString(), WhoColumns.ModifiedAt.ToString("O"));
+            return;
+        }
+        // entity - null, request not null => Set 
+        else if (string.IsNullOrWhiteSpace(ExternalReference.ProviderKey) && !string.IsNullOrWhiteSpace(externalReference.ProviderKey))
+        {
+            ExternalReference = externalReference;
+            return;
+        }
+
+        // entity - not null, request null => do nothing
+        else if (!string.IsNullOrWhiteSpace(ExternalReference.ProviderKey) && string.IsNullOrWhiteSpace(externalReference.ProviderKey))
+        {
+            return;
+        }
+
+        // entity - not null, request not null => Set
+        ExternalReference = externalReference;
+    }
 }
 #pragma warning restore RCS1170 // Use read-only auto-implemented property

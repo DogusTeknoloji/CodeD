@@ -2,11 +2,11 @@
 
 ## Overview
 
-CodeD is a sample project designed to enhance our expertise in **Domain-Driven Design (DDD)**. This is an evolving project, meaning that it will be continuously developed as we explore and experiment with various DDD concepts and methodologies. It serves as both a learning platform and a practical demonstration of how DDD can help address complex business challenges by structuring software around business domains. 
+CodeD is a sample project designed to enhance our expertise in **Domain-Driven Design (DDD)**. This is an evolving project, meaning that it will be continuously developed as we explore and experiment with various DDD concepts and methodologies. It serves as both a learning platform and a practical demonstration of how DDD can help address complex business challenges by structuring software around business domains.
 
-> **Latest Updates:** Check our [Changelog](docs/ChangeLogs/20250402.md) for recent development activities.
+> **Latest Updates:** Check our [Changelog](docs/ChangeLogs/20250507.md) for recent development activities. [[All Change Logs]](docs/ChangeLogs/AllChanges.md)
 
-The project aligns with the philosophy of **"Teknolojide Mükemmellik"** – a guild within our organization dedicated to continuous learning and excellence in technology. Development of CodeD will be an integral part of the guild's meetings, where members collaborate, share insights, and contribute to the codebase. 
+The project aligns with the philosophy of **"Teknolojide Mükemmellik"** – a guild within our organization dedicated to continuous learning and excellence in technology. Development of CodeD will be an integral part of the guild's meetings, where members collaborate, share insights, and contribute to the codebase.
 
 By participating in this project, we aim to:
 
@@ -34,7 +34,7 @@ This project will not only help us build deeper DDD expertise but will also prom
 
 ## Technologies
 
-- **.NET 8.0** – Core framework for building the application.
+- **.NET 9.0** – Core framework for building the application.
 - **Entity Framework Core** – ORM for data access.
 - **Polly** – Resilience and transient fault-handling library.
 - **PostgreSQL** – Relational database for persistent data storage.
@@ -55,7 +55,7 @@ Follow these steps to set up the project locally:
    ```
 
 2. **Install dependencies:**
-   Ensure that you have the .NET 8.0 SDK installed. Run the following command:
+   Ensure that you have the .NET 9.0 SDK installed. Run the following command:
 
    ```bash
    dotnet restore
