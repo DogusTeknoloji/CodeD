@@ -1,8 +1,9 @@
 using CodeD.Api.Dto.Categories;
 using CodeD.Api.Dto.Products;
+using CodeD.Application;
 using CodeD.Application.Commands.Categories;
 using CodeD.Application.Queries;
-using CodeD.Application.Queries.Product;
+using CodeD.Application.Queries.Categories;
 using CodeD.Domain.Abstractions;
 using CodeD.Domain.Categories;
 using CodeD.Domain.Posts;
@@ -106,6 +107,43 @@ namespace CodeD.Api.Controllers
             }
 
             return BadRequest(categoryResult);
+        }
+
+
+        [HttpDelete("{idOrKey}")] // PUT /category/30FFD9E8-C9F8-4149-8C02-CED70A7AC684 or PUT /category/A
+        public async Task<IActionResult> DeleteAsync(
+            [FromRoute] string? idOrKey,
+            [FromServices] IMediator mediator)
+        {
+            var command = new DeleteCategoryCommand();
+
+            if (Guid.TryParse(idOrKey, out Guid id))
+            {
+                command.Id = id;
+            }
+            else if (!string.IsNullOrEmpty(idOrKey))
+            {
+                command.Id = null;
+                command.Key = idOrKey;
+            }
+            else
+            {
+                return NotFound("Id or Key is required.");
+            }
+
+            var categoryResult = await mediator.Send(command);
+
+            if (categoryResult is { IsSuccess: false})
+            {
+                if(categoryResult.Error.Code == ApplicationErrors.CategoryNotFoundCode)
+                {
+                    return NotFound(categoryResult.Error.Message);
+                }
+                
+                return BadRequest(categoryResult);
+            }
+
+            return NoContent();
         }
     }
 }

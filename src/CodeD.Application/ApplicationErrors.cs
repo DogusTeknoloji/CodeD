@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 
 namespace CodeD.Application
 {
-    internal static class ApplicationErrors
+    public static class ApplicationErrors
     {
-        public static Error CategoryNotFound(string key, string? additionalMessage = null)
-            => new("application:category_not_found", $"Category [{key}] not found. {additionalMessage}");
+        public const string CategoryNotFoundCode = "application:category_not_found";
+        public const string CategoryFoundCode = "application:category_found";
 
-        public static Error CategoryNotFound(Guid id, string? additionalMessage = null)
-            => new("application:category_not_found", $"Category [#{id}] not found. {additionalMessage}");
+        internal static Error CategoryNotFound(string key, string? additionalMessage = null)
+            => new(CategoryNotFoundCode, $"Category [{key}] not found. {additionalMessage}");
 
+        internal static Error CategoryNotFound(Guid id, string? additionalMessage = null)
+            => new(CategoryNotFoundCode, $"Category [#{id}] not found. {additionalMessage}");
 
-        public static Error CategoryFound(string key, string? additionalMessage = null)
-            => new("application:category_found", $"Category [{key}] found. {additionalMessage}");
+        internal static Error CategoryFound(string key, string? additionalMessage = null)
+            => new(CategoryFoundCode, $"Category [{key}] found. {additionalMessage}");
     }
 }

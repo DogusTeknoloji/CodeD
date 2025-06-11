@@ -79,5 +79,11 @@ public abstract class Entity<TID>
         // entity - not null, request not null => Set
         ExternalReference = externalReference;
     }
+
+
+    protected void BaseDelete()
+    {
+        IsDeleted = true;
+    }
 }
 #pragma warning restore RCS1170 // Use read-only auto-implemented property

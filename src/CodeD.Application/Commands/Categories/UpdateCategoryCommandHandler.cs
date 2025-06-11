@@ -55,3 +55,50 @@ public sealed class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategor
         }
     }
 }
+
+
+
+public sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCategoryCommand>
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICategoryRepository _categoryRepository;
+
+    public DeleteCategoryCommandHandler(IUnitOfWork unitOfWork, ICategoryRepository categoryRepository)
+    {
+        _unitOfWork = unitOfWork;
+        _categoryRepository = categoryRepository;
+    }
+
+    public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+    {
+        using (_unitOfWork)
+        {
+            Category? entity = null;
+            if (request.Id is not null)
+            {
+                var id = CategoryId.Create(request.Id.Value);
+                entity = await _categoryRepository.GetByIdAsync(id);
+                if (entity is null)
+                {
+                    return Result.Failure<Category?>(ApplicationErrors.CategoryNotFound(id.Value));
+                }
+            }
+            else if (request.Key is not null)
+            {
+                var key = Key.Create(request.Key);
+                entity = await _categoryRepository.GetByKeyAsync(key);
+                if (entity is null)
+                {
+                    return Result.Failure<Category?>(ApplicationErrors.CategoryNotFound(key.Value));
+                }
+            }
+
+            entity!.Delete();
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Ok;
+        }
+    }
+
+}

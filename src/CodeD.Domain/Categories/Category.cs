@@ -38,4 +38,13 @@ public sealed class Category : Entity<CategoryId>
         // Domain Event
         AddDomainEvent(new CategoryUpdatedEvent(Id));
     }
+
+    public void Delete()
+    {
+        BaseDelete();
+
+        // Domain Event
+        AddDomainEvent(new CategoryDeletedEvent(Id));
+    }
+
 }

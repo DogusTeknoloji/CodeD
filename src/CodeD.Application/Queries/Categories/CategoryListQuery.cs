@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace CodeD.Application.Queries.Product;
+namespace CodeD.Application.Queries.Categories;
 
 public record CategoryListResponse(int Id, string Key, string Title);
 

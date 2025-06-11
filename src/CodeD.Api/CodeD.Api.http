@@ -55,5 +55,36 @@ Content-Type: application/json
 
 {
   "key": "A",
-  "title": "Demo4"
+  "title": "Demo5"
 }
+
+
+
+
+
+
+
+
+
+
+
+###
+
+
+POST {{CodeD.Api_HostAddress}}/Category
+Accept: application/json
+Content-Type: application/json
+
+{
+  "key": "A3",
+  "title": "Demo 55"
+}
+
+
+
+###
+
+# A
+
+DELETE {{CodeD.Api_HostAddress}}/Category/A3
+Accept: application/json
